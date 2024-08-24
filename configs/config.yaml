@@ -1,0 +1,19 @@
+version: 0.0.1
+
+# Choose a descriptive name for the experiment
+expname: gpnn_nmc
+
+# Path to the root of the project
+scratch_foler: user_defined_scratch_folder
+
+defaults:
+  - data: NMC
+  - train: default
+  - model: default
+  - inference: default
+  - input: null
+  - _self_
+
+hydra:
+  run:
+    dir: ${scratch_foler}/../logging/gpnn_v${version}/hydra/${now:%Y-%m-%d}/${expname}

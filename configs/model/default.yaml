@@ -1,0 +1,7 @@
+_target_: gpnn.models.MLP
+h5_path: ${data.h5_path}
+hidden_dim: 300
+n_layers: 3
+optim:
+  lr: ${train.lr}
+  epochs: ${train.epochs}

@@ -1,0 +1,43 @@
+# Description: 
+# - Template for creating a custom dataset.
+
+# Instructions: 
+# 1. Load all your data into a directory with the following structure:
+#   - root_dir
+#     - name (e.g. "NMC")
+#       - chgcars (this is where the CHGCAR files should be stored)
+#         - <structure1>.CHGCAR
+#         - <structure2>.CHGCAR
+#         - ...
+#       - datasets (this will be created and populated by the builder)
+#         - <name>.h5 (this file is the dataset object resulting from "build.py")
+# 2. Copy this template to GPNN/configs/data/<name>.yaml and modify the parameters as needed.
+# 3. Afterwards update "defaults.data" in GPNN/configs/config.yaml to the name of your dataset configuration file.
+# 4. Run "python build.py" to build the dataset object.
+# NOTE: if you skip step 3, you can still run "python build.py data=<name>" for the same effect.
+
+# Naming and Paths
+name: # Name of your dataset
+root_dir: # Path to the root directory of your dataset
+data_dir: ${data.root_dir}/${data.name}  # DO NOT MODIFY
+h5_path: ${data.data_dir}/datasets/${data.name}.h5 # DO NOT MODIFY
+override: False  # If True, existing datasets will be overwritten
+
+# Dataset splits (int, float, and dict types are supported).
+# int: number of structures per split (sum must be <= total structures in dataset)
+# float: fraction of structures per split (must sum to 1, e.g. [.8, .1, .1] for 80/10/10 split)
+# dict: key is "train", "val", or "test", value is the file names of structures to include (List[str])
+splits: [.7, .1, .2]  # train, val, test
+
+# Dataset builder
+builder:
+  _target_: gpnn.data.builders.HDF5DatasetBuilder  # DO NOT MODIFY
+  dataset_elements: ["Ni", "Mn", "Co", "Li", "O"]  # Update with the elements in your dataset
+  in_dir: ${data.data_dir}/chgcars  # DO NOT MODIFY
+  out_dir: ${data.data_dir}/datasets  # DO NOT MODIFY
+  filename: ${data.name}.h5  # DO NOT MODIFY
+  cutoff: 6  # DO NOT MODIFY (unless you know what you're doing - this is the cutoff radius in Angstroms for fingerprinting)
+  shape: null  # define grid shape OR downsample_factor
+  downsample_factor: 2
+  splits: ${data.splits} # DO NOT MODIFY
+  device: gpu # gpu or cpu

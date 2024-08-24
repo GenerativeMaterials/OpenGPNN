@@ -1,0 +1,15 @@
+
+# Change to the directory path containing the CIF files you will run inference on 
+cif_dir: /home/jake/newvol/data/NMC/inference/scale_test
+
+# Change to the location you want to save the resulting CHGCARs
+save_dir: /home/jake/newvol/data/NMC/inference/chgcars
+
+# Do not modify
+model_path: ../models/${expname}
+
+# Update with the shape of the charge density grid you want to use for inference
+shape: [56, 56, 140]
+
+# "gpu" or "cpu"
+device: gpu

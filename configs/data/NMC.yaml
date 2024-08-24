@@ -1,0 +1,35 @@
+# Download the NMC CHGCAR files to the root_dir in a folder called "chgcars"
+
+# Update this path to the root directory where you have stored the directory of chgcars
+root_dir: /home/jake/newvol/data
+
+# Set to true if you want to overwrite existing dataset files
+override: False
+
+# Do not modify the below (unless you know what you're doing)
+name: NMC
+data_dir: ${data.root_dir}/${data.name}
+h5_path: ${data.data_dir}/datasets/${data.name}.h5
+
+# Dataset splits (int, float, and dict types are supported).
+# int: number of structures per split (sum must be <= total structures in dataset)
+# float: fraction of structures per split (must sum to 1, e.g. [.8, .1, .1] for 80/10/10 split)
+# dict: key is "train", "val", or "test", value is the file names of structures to include (List[str])
+splits: [1450, 50, 500]  # train, val, test
+
+# Dataset builder
+builder:
+  _target_: gpnn.data.builders.HDF5DatasetBuilder
+  dataset_elements: ["Ni", "Mn", "Co", "Li", "O"]
+  in_dir: ${data.data_dir}/chgcars
+  out_dir: ${data.data_dir}/datasets
+  filename: ${data.name}.h5
+  cutoff: 6
+  shape: null  # define grid shape OR downsample_factor
+  downsample_factor: 2
+  splits: ${data.splits}
+  device: gpu
+
+  
+
+

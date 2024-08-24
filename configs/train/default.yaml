@@ -1,0 +1,45 @@
+
+# Update if desired
+epochs: 200
+lr: 1e-4
+deterministic: False  # Set to True for reproducibility
+seed: 42
+
+# Below defaults should be sufficient
+batch_size: 20_000
+shuffle: True
+model_save_dir: ../models/${expname}
+verbose:
+
+trainer:
+  _target_: gpnn.train.Trainer
+  cfg: null
+
+data_module:
+  _target_: gpnn.data.datamodule.HDF5DataModule
+  h5_path: ${data.h5_path}
+  batch_size: ${train.batch_size}
+  shuffle: ${train.shuffle}
+
+checkpoint_callback:
+  _target_: pytorch_lightning.callbacks.ModelCheckpoint
+  dirpath: ${train.model_save_dir}
+  filename: "{epoch}-{val_loss:.8f}"
+  monitor: val_loss
+  verbose: ${train.verbose}
+  save_last: True
+  mode: min
+
+lr_monitor:
+  _target_: pytorch_lightning.callbacks.LearningRateMonitor
+  logging_interval: step
+
+lightning_trainer:
+  _target_: pytorch_lightning.Trainer
+  devices: auto
+  accelerator: ${data.builder.device}
+  deterministic: ${train.deterministic}
+  max_epochs: ${train.epochs}
+  enable_checkpointing: True
+  default_root_dir: ${scratch_folder}
+  log_every_n_steps: 50
